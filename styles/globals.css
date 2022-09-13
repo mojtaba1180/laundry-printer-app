@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.sidebar_active{
+    position: relative;
+}
+
+.sidebar_active span{
+    transition: all .5s;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-40%);
+    left: -10%;
+    content: '';
+    background: #000;
+    width: 10px;
+    height: 20px
+}
