@@ -11,9 +11,10 @@
     position: absolute;
     top: 50%;
     transform: translateY(-40%);
-    left: -10%;
+    left: -5%;
     content: '';
     background: #000;
     width: 10px;
-    height: 20px
+    height: 20px;
+    z-index: 2;
 }

@@ -22,7 +22,7 @@ const Sidebar = () => {
         {
           links.map((item, idx) => {
             return (
-              <li key={idx} className={`text-2xl font-semibold text-gray-600 ${router.pathname === item.link && 'sidebar_active'} `}>
+              <li key={idx} className={`text-2xl font-semibold text-gray-600 ${router.pathname === item.link ? 'sidebar_active' : ""} `}>
                 <Link href={item.link}>
                   <a>{item.title}</a>
                 </Link>
