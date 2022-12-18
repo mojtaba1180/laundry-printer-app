@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "pages/api/print/print.js"  ],
   "exclude": [
     "node_modules"
   ]
