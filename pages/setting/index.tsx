@@ -1,25 +1,61 @@
-import { Drawer, TextInput } from '@mantine/core';
+import { Drawer, Select, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PrinterCard from '../../components/printer-card';
 import GridContent from '../../layout/grid-content';
+import http from './../../utils/http';
 
 const Setting = () => {
-  const [opened, setOpened] = useState(false)
+  const [opened, setOpened] = useState(false);
+  const [printers, setPrinters] = useState([])
+  const [printersLoading, setPrintersLoading] = useState(false)
 
+  useEffect(() => {
+    if(opened){
+      handleGetPrinters()
+    }
+    return () => {
+      setPrinters([])
+    };
+  }, [opened])
 
 
   // useForm
   const form = useForm({
     initialValues: {
       name: '',
-      email: '',
+      printer: '',
     },
      validate: {
       name: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : null),
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      printer: (value) => (value.length < 1 ? 'please select printer' : null),
     },
   })
+  
+  const handleGetPrinters = () => {
+    setPrintersLoading(true)
+    http.get("/get-printers").then(res => {
+    setPrintersLoading(false)
+    console.log(res);
+    setPrinters(res.data.map(item => {
+      return {
+        value:item.name,
+        label:item.name
+      }
+    }))
+    }).catch(() => {
+    setPrintersLoading(false)
+    })
+  }
+  const handleSubmit = (values) => {
+    http.get(`/print-file?printer=${values.printer}&file=${"http://localhost:3000/dummy.pdf"}`).then(res => {
+    console.log(values);
+      console.log(res);
+    }).catch(err => {
+      console.log(err);
+      
+    })
+  }
   return (<>
     <GridContent >
       <PrinterCard.Add onClick={() => setOpened(true)} />
@@ -33,11 +69,20 @@ const Setting = () => {
       position='right'
     >
       <form
-        onSubmit={form.onSubmit((values) => console.log(values)
+        onSubmit={form.onSubmit((values) => {handleSubmit(values)}
         )}
       >
-        <TextInput label="Name" placeholder="Name" {...form.getInputProps('name')} />
-        <TextInput mt="md" label="Email" placeholder="Email" {...form.getInputProps('email')} />
+        <TextInput label="Name" description={"Creating an ID for the printer"}  placeholder="Name" {...form.getInputProps('name')} />
+        <Select
+          disabled={printersLoading}
+          label="Select Printer"
+          placeholder="empty"
+          className='mt-4'
+          // onClick={() => printers.length === 0 ? handleGetPrinters() : null}
+          data={printers}
+          {...form.getInputProps('printer')}
+        />
+        {/* <TextInput mt="md" label="Email" placeholder="Email" {...form.getInputProps('email')} /> */}
         <button className='bg-blue-400 px-4 py-2 text-white w-full my-5 rounded-lg' type="submit" color={'blue'} >
           Submit
         </button>
