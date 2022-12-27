@@ -48,13 +48,19 @@ const Setting = () => {
     })
   }
   const handleSubmit = (values) => {
-    http.get(`/print-file?printer=${values.printer}&file=${"http://localhost:3000/dummy.pdf"}`).then(res => {
-    console.log(values);
-      console.log(res);
-    }).catch(err => {
-      console.log(err);
-      
+    http.post("/add-printer",form).then(res =>{
+      setOpened(false)
+    }
+    ).catch(err => {
+
     })
+    // http.get(`/print-file?printer=${values.printer}&file=${"http://localhost:3000/dummy.pdf"}`).then(res => {
+    // console.log(values);
+    //   console.log(res);
+    // }).catch(err => {
+    //   console.log(err);
+      
+    // })
   }
   return (<>
     <GridContent >
@@ -83,7 +89,7 @@ const Setting = () => {
           {...form.getInputProps('printer')}
         />
         {/* <TextInput mt="md" label="Email" placeholder="Email" {...form.getInputProps('email')} /> */}
-        <button className='bg-blue-400 px-4 py-2 text-white w-full my-5 rounded-lg' type="submit" color={'blue'} >
+        <button className='w-full px-4 py-2 my-5 text-white bg-blue-400 rounded-lg' type="submit" color={'blue'} >
           Submit
         </button>
       </form>
