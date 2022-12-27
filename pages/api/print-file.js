@@ -3,7 +3,7 @@ const Printer = require('@thiagoelg/node-printer');
 const path = require('path');
 const home_dir = require('os').homedir();
 const imagemagick = require('imagemagick-native');
-
+const db = require("./db.json")
 const PrintFile = async (req, response) => {
     if (req.method === "GET") {
         const query = req.query
@@ -29,31 +29,48 @@ const PrintFile = async (req, response) => {
                 console.log(file_path);
                 if (printer || file_url) {
                     if (process.platform != 'win32') {
-                        Printer.printFile({
-                            filename: file_path,
-                            printer: printer, // Printer name, if missing then will print to default Printer
-                            success: function (jobID) {
-                                response.status(200).json({ message: "print not windows " })
-                                console.log("sent to Printer with ID: " + jobID);
-                            },
-                            error: function (err) {
-                                response.status(400).json({ message: "error print not windows " })
-                                console.log(err);
-                            }
-                        });
+                        db.printers.length > 1 ?
+                            db.printers.map(p => {
+                                if (p.name === printer) {
+                                    Printer.printFile({
+                                        filename: file_path,
+                                        printer: p.value, // Printer name, if missing then will print to default Printer
+                                        success: function (jobID) {
+                                            response.status(200).json({ message: "print not windows " })
+                                            console.log("sent to Printer with ID: " + jobID);
+                                        },
+                                        error: function (err) {
+                                            response.status(400).json({ message: "error print not windows " })
+                                            console.log(err);
+                                        }
+                                    });
+                                } else {
+                                    response.status(400).json({ message: "printer not found" })
+                                }
+                            })
+                            : response.status(400).json({ message: "please add printer " })
                     } else {
-                        Printer.printDirect({
-                            data: file_path,
-                            printer: printer, // printer name, if missing then will print to default printer
-                            success: function (jobID) {
-                                response.status(200).json({ message: "printed" })
-                                console.log("sent to printer with ID: " + jobID);
-                            },
-                            error: function (err) {
-                                response.status(400).json({ message: "error in to print" })
-                                console.log(err);
-                            }
-                        });
+                        db.printers.length > 1 ?
+                            db.printers.map(p => {
+                                if (p.name === printer) {
+                                    Printer.printDirect({
+                                        data: file_path,
+                                        printer: p.value, // printer name, if missing then will print to default printer
+                                        success: function (jobID) {
+                                            response.status(200).json({ message: "printed" })
+                                            console.log("sent to printer with ID: " + jobID);
+                                        },
+                                        error: function (err) {
+                                            response.status(400).json({ message: "error in to print" })
+                                            console.log(err);
+                                        }
+                                    });
+                                } else {
+                                    response.status(400).json({ message: "printer not found" })
+
+                                }
+                            })
+                            : response.status(400).json({ message: "please add printer " })
 
                     }
                 } else {
