@@ -4,18 +4,13 @@ const handler = async (req, res) => {
     if (req.method === "POST") {
         const db = await initDB()
 
-        // If file.json doesn't exist, db.data will be null
-        // Set default data
-        db.data ||= { printers: [] }
-        // Create and query items using plain JS
-        db.data.printers.push(req.body.values)
-        // Write db.data content to db.json
+        db.data.printers = db.data.printers.filter((printer) => printer.name !== req.body.name)
         await db.write()
+
         res.status(200).json({ message: "ok" })
     } else {
         res.status(503).json({ message: "bad-request" })
     }
 }
-
 
 export default handler

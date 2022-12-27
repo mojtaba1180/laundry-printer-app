@@ -1,15 +1,18 @@
 const nodePrinter = require('@thiagoelg/node-printer');
+import initDB from '../../utils/lowdb';
 
 const handler = async (req, res) => {
     if (req.method === "GET") {
-        const getPrinter = nodePrinter.getPrinter();
-        console.log(req.method);
+        const db = await initDB()
+
+        const { printers } = db.data
         let response = []
-        if (Array.isArray(getPrinter)) {
-            response = getPrinter
+        if (Array.isArray(printers)) {
+            response = printers
         } else {
-            response.push(getPrinter)
+            response.push(printers)
         }
+
         res.status(200).json(response)
     } else {
         res.status(403).json({ message: "for denied " })

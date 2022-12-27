@@ -1,6 +1,12 @@
 {
-  "posts": [
-    "hello world",
-    "hello world"
+  "printers": [
+    {
+      "name": "arc",
+      "printer": "eDocPrinter PDF Pro"
+    },
+    {
+      "name": "radin",
+      "printer": "Microsoft Print to PDF"
+    }
   ]
 }
