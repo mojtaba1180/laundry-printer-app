@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "export": "next export",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "tauri": "tauri"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -27,6 +29,7 @@
     "react-hot-toast": "^2.3.0"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^1.2.2",
     "@types/node": "^18.7.18",
     "@types/react": "^18.0.20",
     "autoprefixer": "^10.4.9",

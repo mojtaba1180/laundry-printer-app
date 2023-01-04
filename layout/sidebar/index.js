@@ -18,11 +18,11 @@ const Sidebar = () => {
   return (
     <div className="flex flex-col w-full h-full gap-10 p-5 ">
       <h1 className="text-3xl font-semibold" >  Laundry Settings Printer</h1>
-      <ul className="flex flex-col gap-4 ">
+      <ul className="flex flex-col gap-2 ">
         {
           links.map((item, idx) => {
             return (
-              <li key={idx} className={`text-2xl font-semibold text-gray-600 ${router.pathname === item.link ? 'sidebar_active' : ""} `}>
+              <li key={idx} className={`text-2xl font-semibold p-2 rounded-xl transition-all text-gray-600 ${router.pathname === item.link ? 'bg-gray-300' : ""} `}>
                 <Link href={item.link}>
                   <a>{item.title}</a>
                 </Link>

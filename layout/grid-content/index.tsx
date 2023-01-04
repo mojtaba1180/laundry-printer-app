@@ -5,7 +5,7 @@ interface Prop {
 
 const GridContent = ({children}:Prop) => {
   return (
-    <div className="grid w-full h-full grid-cols-3 gap-3 grid-rows-6 ">
+    <div className="grid w-full h-[95%] grid-cols-3 gap-3 grid-rows-3 p-3">
         {children}
     </div>
   )

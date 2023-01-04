@@ -1,4 +1,4 @@
-import { Drawer, Select, TextInput } from '@mantine/core';
+import { Button, Drawer, Select, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import PrinterCard from '../../components/printer-card';
@@ -68,13 +68,22 @@ const Setting = () => {
        })    
    }
   return (<>
+    <div className='h-12 flex justify-end items-center p-2 bg-gray-300/40 w-full -mt-0'>
+      <Button
+      color="blue"
+      variant='outline'
+      onClick={() => setOpened(true)}
+      >
+              Add Printer
+      </Button>
+    </div>
     <GridContent >
       {currentPrinter?.map((item, idx) => {
           return (
-           <PrinterCard onClick={() => handleRemove(item.name)} key={idx} printer={item.printer} name={item.name}/>
+           <PrinterCard isSetting={true} onClick={() => handleRemove(item.name)} key={idx} printer={item.printer} name={item.name}/>
           )
       })}
-      <PrinterCard.Add onClick={() => setOpened(true)} />
+      {/* <PrinterCard.Add  /> */}
     </GridContent>
     <Drawer
       opened={opened}

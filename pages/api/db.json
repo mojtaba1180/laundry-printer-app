@@ -3,6 +3,10 @@
     {
       "name": "blue",
       "printer": "eDocPrinter PDF Pro"
+    },
+    {
+      "name": "printer-main",
+      "printer": "priPrinter"
     }
   ]
 }

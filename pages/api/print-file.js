@@ -3,7 +3,7 @@ import initDB from '../../utils/lowdb';
 const NodePrinter = require('@thiagoelg/node-printer');
 const path = require('path');
 const home_dir = require('os').homedir();
-const imagemagick = require('imagemagick-native');
+// const imagemagick = require('imagemagick-native');
 
 const PrintFile = async (req, response) => {
     if (req.method === "GET") {
@@ -47,39 +47,40 @@ const PrintFile = async (req, response) => {
                         } else {
                             response.status(400).json({ message: "printer not found" })
                         }
-                    } else {
-                        var data = fs.readFileSync(file_path);
-                        const device = db.data.printers.find(pri => pri.name == printer);
-
-                        if (device) {
-
-                            imagemagick.convert({
-                                srcData: data,
-                                srcFormat: 'PDF',
-                                format: 'EMF',
-                            }, function (err, buffer) {
-                                if (err) {
-                                    throw 'something went wrong on converting to EMF: ' + err;
-                                }
-
-                                NodePrinter.printDirect({
-                                    data: buffer,
-                                    type: 'EMF',
-                                    printer: device.value, // printer name, if missing then will print to default printer
-                                    success: function (jobID) {
-                                        response.status(200).json({ message: "printed" })
-                                        console.log("sent to printer with ID: " + jobID);
-                                    },
-                                    error: function (err) {
-                                        response.status(400).json({ message: "error in to print" })
-                                        console.log(err);
-                                    }
-                                });
-                            })
-                        } else {
-                            response.status(400).json({ message: "printer not found" })
-                        }
                     }
+                    //  else {
+                    //     var data = fs.readFileSync(file_path);
+                    //     const device = db.data.printers.find(pri => pri.name == printer);
+
+                    //     if (device) {
+
+                    //         imagemagick.convert({
+                    //             srcData: data,
+                    //             srcFormat: 'PDF',
+                    //             format: 'EMF',
+                    //         }, function (err, buffer) {
+                    //             if (err) {
+                    //                 throw 'something went wrong on converting to EMF: ' + err;
+                    //             }
+
+                    //             NodePrinter.printDirect({
+                    //                 data: buffer,
+                    //                 type: 'EMF',
+                    //                 printer: device.value, // printer name, if missing then will print to default printer
+                    //                 success: function (jobID) {
+                    //                     response.status(200).json({ message: "printed" })
+                    //                     console.log("sent to printer with ID: " + jobID);
+                    //                 },
+                    //                 error: function (err) {
+                    //                     response.status(400).json({ message: "error in to print" })
+                    //                     console.log(err);
+                    //                 }
+                    //             });
+                    //         })
+                    //     } else {
+                    //         response.status(400).json({ message: "printer not found" })
+                    //     }
+                    // }
                 } else {
                     response.status(400).json({ message: "please check your query params example : url?printer='test'&file_uri='http://test.pdf'" })
                 }
