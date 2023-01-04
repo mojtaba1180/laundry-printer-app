@@ -8,6 +8,7 @@ import http from './../../utils/http';
 const Setting = () => {
   const [opened, setOpened] = useState(false);
   const [printers, setPrinters] = useState([])
+  const [currentPrinter, setCurrentPrinter] = useState([])
   const [printersLoading, setPrintersLoading] = useState(false)
 
   useEffect(() => {
@@ -19,6 +20,10 @@ const Setting = () => {
     };
   }, [opened])
 
+
+  useEffect(() => {
+   handleGetPrinter()
+  })
 
   // useForm
   const form = useForm({
@@ -32,11 +37,15 @@ const Setting = () => {
     },
   })
   
+  const handleGetPrinter= () => {
+    http.get('/get-printer').then(res => {
+          setCurrentPrinter(res.data)
+        })
+  }
   const handleGetPrinters = () => {
     setPrintersLoading(true)
     http.get("/get-printers").then(res => {
     setPrintersLoading(false)
-    console.log(res);
     setPrinters(res.data.map(item => {
       return {
         value:item.name,
@@ -47,23 +56,24 @@ const Setting = () => {
     setPrintersLoading(false)
     })
   }
-  const handleSubmit = (values) => {
+  const handleSubmit = () => {
     http.post("/add-printer",form).then(res =>{
       setOpened(false)
     }
-    ).catch(err => {
-
-    })
-    // http.get(`/print-file?printer=${values.printer}&file=${"http://localhost:3000/dummy.pdf"}`).then(res => {
-    // console.log(values);
-    //   console.log(res);
-    // }).catch(err => {
-    //   console.log(err);
-      
-    // })
-  }
+    )
+   }
+   const handleRemove = (name: String) =>{
+       http.post("/delete-printer",{name}).then(res =>{
+          
+       })    
+   }
   return (<>
     <GridContent >
+      {currentPrinter?.map((item, idx) => {
+          return (
+           <PrinterCard onClick={() => handleRemove(item.name)} key={idx} printer={item.printer} name={item.name}/>
+          )
+      })}
       <PrinterCard.Add onClick={() => setOpened(true)} />
     </GridContent>
     <Drawer
@@ -97,5 +107,6 @@ const Setting = () => {
   </>
   )
 }
+
 
 export default Setting

@@ -1,9 +1,9 @@
 import http_get_file from '../../utils/http_get_file';
+import initDB from '../../utils/lowdb';
 const NodePrinter = require('@thiagoelg/node-printer');
 const path = require('path');
 const home_dir = require('os').homedir();
 const imagemagick = require('imagemagick-native');
-import initDB from '../../utils/lowdb';
 
 const PrintFile = async (req, response) => {
     if (req.method === "GET") {
@@ -59,7 +59,7 @@ const PrintFile = async (req, response) => {
                                 format: 'EMF',
                             }, function (err, buffer) {
                                 if (err) {
-                                    throw 'something went wrong on converting to EMF: ' + err; \
+                                    throw 'something went wrong on converting to EMF: ' + err;
                                 }
 
                                 NodePrinter.printDirect({

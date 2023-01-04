@@ -1,12 +1,8 @@
 {
   "printers": [
     {
-      "name": "arc",
+      "name": "blue",
       "printer": "eDocPrinter PDF Pro"
-    },
-    {
-      "name": "radin",
-      "printer": "Microsoft Print to PDF"
     }
   ]
 }

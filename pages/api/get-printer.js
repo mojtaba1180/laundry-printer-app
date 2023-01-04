@@ -1,4 +1,3 @@
-const nodePrinter = require('@thiagoelg/node-printer');
 import initDB from '../../utils/lowdb';
 
 const handler = async (req, res) => {

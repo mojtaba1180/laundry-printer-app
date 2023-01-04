@@ -6,7 +6,7 @@ export default function Home({data}) {
     <GridContent>
       {data?.map((item, idx) => {
           return (
-           <PrinterCard key={idx} name={item.name}/>
+           <PrinterCard key={idx} printer={item.printer} name={item.name}/>
           )
       })}
     </GridContent>
