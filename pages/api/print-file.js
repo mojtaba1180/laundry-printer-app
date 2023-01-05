@@ -6,8 +6,10 @@ const home_dir = require('os').homedir();
 // const imagemagick = require('imagemagick-native');
 
 const PrintFile = async (req, response) => {
-    if (req.method === "GET") {
+    if (req.method === "POST") {
         const query = req.query
+        const body = req.body
+        console.log(body);
         if (query.file) {
 
             const file_url = query.file;
@@ -48,39 +50,29 @@ const PrintFile = async (req, response) => {
                             response.status(400).json({ message: "printer not found" })
                         }
                     }
-                    //  else {
-                    //     var data = fs.readFileSync(file_path);
-                    //     const device = db.data.printers.find(pri => pri.name == printer);
+                    else {
+                        var data = fs.readFileSync(file_path);
+                        const device = db.data.printers.find(pri => pri.name == printer);
+                        const buffer = Buffer.from(body.blob, 'binary')
+                        if (device) {
 
-                    //     if (device) {
-
-                    //         imagemagick.convert({
-                    //             srcData: data,
-                    //             srcFormat: 'PDF',
-                    //             format: 'EMF',
-                    //         }, function (err, buffer) {
-                    //             if (err) {
-                    //                 throw 'something went wrong on converting to EMF: ' + err;
-                    //             }
-
-                    //             NodePrinter.printDirect({
-                    //                 data: buffer,
-                    //                 type: 'EMF',
-                    //                 printer: device.value, // printer name, if missing then will print to default printer
-                    //                 success: function (jobID) {
-                    //                     response.status(200).json({ message: "printed" })
-                    //                     console.log("sent to printer with ID: " + jobID);
-                    //                 },
-                    //                 error: function (err) {
-                    //                     response.status(400).json({ message: "error in to print" })
-                    //                     console.log(err);
-                    //                 }
-                    //             });
-                    //         })
-                    //     } else {
-                    //         response.status(400).json({ message: "printer not found" })
-                    //     }
-                    // }
+                            NodePrinter.printDirect({
+                                data: buffer,
+                                type: 'AUTO',
+                                printer: device.value, // printer name, if missing then will print to default printer
+                                success: function (jobID) {
+                                    response.status(200).json({ message: "printed" })
+                                    console.log("sent to printer with ID: " + jobID);
+                                },
+                                error: function (err) {
+                                    response.status(400).json({ message: "error in to print" })
+                                    console.log(err);
+                                }
+                            });
+                        } else {
+                            response.status(400).json({ message: "printer not found" })
+                        }
+                    }
                 } else {
                     response.status(400).json({ message: "please check your query params example : url?printer='test'&file_uri='http://test.pdf'" })
                 }
@@ -92,7 +84,7 @@ const PrintFile = async (req, response) => {
             response.status(400).json({ message: "please use a query { file } example ?file=''" })
         }
     } else {
-        response.status(200).json({ test: 'Please Use GET method' })
+        response.status(200).json({ test: 'Please Use POST method' })
     }
 }
 export default PrintFile
