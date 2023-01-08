@@ -1,6 +1,7 @@
 import multiparty from 'multiparty';
 import NextCors from 'nextjs-cors';
 import { print } from 'pdf-to-printer';
+import initDB from '../../utils/lowdb';
 const NodePrinter = require('@thiagoelg/node-printer');
 const path = require('path');
 const home_dir = require('os').homedir();
@@ -41,6 +42,9 @@ const handlePrint = async (data, req, response) => {
 
     const printer = data.fields.printer[0];
     const file_path = data.files.file[0].path;
+
+    const db = await initDB()
+      
     if (!file_path) {
         throw 'PDF file name is missing. Please use the following params: <filename> [printername]'
     }
