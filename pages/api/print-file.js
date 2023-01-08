@@ -1,90 +1,75 @@
-import http_get_file from '../../utils/http_get_file';
-import initDB from '../../utils/lowdb';
+import multiparty from 'multiparty';
+import NextCors from 'nextjs-cors';
+import { print } from 'pdf-to-printer';
 const NodePrinter = require('@thiagoelg/node-printer');
 const path = require('path');
 const home_dir = require('os').homedir();
 // const imagemagick = require('imagemagick-native');
-
-const PrintFile = async (req, response) => {
-    if (req.method === "POST") {
-        const query = req.query
-        const body = req.body
-        console.log(body);
-        if (query.file) {
-
-            const file_url = query.file;
-            const { printer } = query;
-            const file_name = query.file.split('/').at(-1);
-            const folder_path = path.join(home_dir, '/Documents/printer_file');
+export const config = { api: { bodyParser: false } }
 
 
-            // if (process.platform !== 'win32') {
-            //     throw 'This application can be run only on win32 as a demo of print PDF image'
-            // }
+const Handler = async (req, res) => {
+    await NextCors(req, res, {
+        // Options
+        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+        origin: '*',
+        optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+    });
+    if (req.method === 'POST') {
+        const form = new multiparty.Form();
+        const data = await new Promise((resolve, reject) => {
+            form.parse(req, function (err, fields, files) {
+                if (err) reject({ err });
+                resolve({ fields, files });
+            });
+        });
+        // console.log(`data: `, JSON.stringify(data));
+        await handlePrint(data, req, res);
 
-            if (!file_name) {
-                throw 'PDF file name is missing. Please use the following params: <filename> [printername]'
-            }
-
-            const db = await initDB();
-
-            await http_get_file(file_url, file_name, folder_path).then(res => {
-                const file_path = path.join(folder_path, file_name);
-                if (printer || file_url) {
-                    if (process.platform != 'win32') {
-                        const device = db.data.printers.find(pri => pri.name == printer);
-                        if (device) {
-                            NodePrinter.printFile({
-                                filename: file_path,
-                                printer: device.value, // Printer name, if missing then will print to default Printer
-                                success: function (jobID) {
-                                    response.status(200).json({ message: "print not windows " })
-                                    console.log("sent to Printer with ID: " + jobID);
-                                },
-                                error: function (err) {
-                                    response.status(400).json({ message: "error print not windows " })
-                                    console.log(err);
-                                }
-                            });
-                        } else {
-                            response.status(400).json({ message: "printer not found" })
-                        }
-                    }
-                    else {
-                        var data = fs.readFileSync(file_path);
-                        const device = db.data.printers.find(pri => pri.name == printer);
-                        const buffer = Buffer.from(body.blob, 'binary')
-                        if (device) {
-
-                            NodePrinter.printDirect({
-                                data: buffer,
-                                type: 'AUTO',
-                                printer: device.value, // printer name, if missing then will print to default printer
-                                success: function (jobID) {
-                                    response.status(200).json({ message: "printed" })
-                                    console.log("sent to printer with ID: " + jobID);
-                                },
-                                error: function (err) {
-                                    response.status(400).json({ message: "error in to print" })
-                                    console.log(err);
-                                }
-                            });
-                        } else {
-                            response.status(400).json({ message: "printer not found" })
-                        }
-                    }
-                } else {
-                    response.status(400).json({ message: "please check your query params example : url?printer='test'&file_uri='http://test.pdf'" })
-                }
-
-            })
-
-        }
-        else {
-            response.status(400).json({ message: "please use a query { file } example ?file=''" })
-        }
+        // Process a POST request
+        // res.status(200).json({ data: 'success' });
     } else {
-        response.status(200).json({ test: 'Please Use POST method' })
+        // Handle any other HTTP method
+        res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
     }
+};
+
+export default Handler
+
+
+const handlePrint = async (data, req, response) => {
+
+    const printer = data.fields.printer[0];
+    const file_path = data.files.file[0].path;
+    if (!file_path) {
+        throw 'PDF file name is missing. Please use the following params: <filename> [printername]'
+    }
+    if (!printer) {
+        response.status(400).json({ message: "printer param not found" });
+        throw "printer param not found";
+    }
+    const device = db.data.printers.find(pri => pri.name == printer);
+    if (device) {
+        const options = {
+            printer: device.printer,
+        };
+        await print(file_path, options).then((res) => {
+            console.log(res)
+            response.status(200).json({ message: "printed" })
+        }
+        ).catch(err => {
+            console.log(err);
+            response.status(500).json({ message: "error for print" })
+        });
+
+    } else {
+        response.status(400).json({ message: "printer not found" })
+    }
+
+
 }
-export default PrintFile
+
+
+
+
+// export default PrintFile
