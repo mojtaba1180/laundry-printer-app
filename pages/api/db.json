@@ -1,12 +1,3 @@
 {
-  "printers": [
-    {
-      "name": "invoice",
-      "printer": "eDocPrinter PDF Pro"
-    },
-    {
-      "name": "small",
-      "printer": "priPrinter"
-    }
-  ]
+  "printers": []
 }

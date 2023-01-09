@@ -1,4 +1,4 @@
-import { Button, Drawer, Select, TextInput } from '@mantine/core';
+import { Button, Drawer, Select } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import PrinterCard from '../../components/printer-card';
@@ -10,7 +10,22 @@ const Setting = () => {
   const [printers, setPrinters] = useState([])
   const [currentPrinter, setCurrentPrinter] = useState([])
   const [printersLoading, setPrintersLoading] = useState(false)
+  const [names] = useState([
+    {
+        value:"purple",
+        label:"purple"
+      },
+        {
+        value:"white",
+        label:"white"
+      },
+        {
+        value:"blue",
+        label:"blue"
+      },
 
+
+  ])
   useEffect(() => {
     if(opened){
       handleGetPrinters()
@@ -32,7 +47,7 @@ const Setting = () => {
       printer: '',
     },
      validate: {
-      name: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : null),
+      name: (value) => (value.length < 2 ? 'please select name' : null),
       printer: (value) => (value.length < 1 ? 'please select printer' : null),
     },
   })
@@ -59,6 +74,7 @@ const Setting = () => {
   const handleSubmit = () => {
     http.post("/add-printer",form).then(res =>{
       setOpened(false)
+      form.reset()
     }
     )
    }
@@ -68,7 +84,7 @@ const Setting = () => {
        })    
    }
   return (<>
-    <div className='h-12 flex justify-end items-center p-2 bg-gray-300/40 w-full -mt-0'>
+    <div className='flex items-center justify-end w-full h-12 p-2 -mt-0 bg-gray-300/40'>
       <Button
       color="blue"
       variant='outline'
@@ -97,8 +113,18 @@ const Setting = () => {
         onSubmit={form.onSubmit((values) => {handleSubmit(values)}
         )}
       >
-        <TextInput label="Name" description={"Creating an ID for the printer"}  placeholder="Name" {...form.getInputProps('name')} />
+        
+        {/* <TextInput label="Name" description={"Creating an ID for the printer"}  placeholder="Name" {...form.getInputProps('name')} /> */}
         <Select
+          disabled={printersLoading}
+          label="Select Printer"
+          placeholder="empty"
+          className='mt-4'
+          // onClick={() => printers.length === 0 ? handleGetPrinters() : null}
+          data={names}
+          {...form.getInputProps('name')}
+        />
+         <Select
           disabled={printersLoading}
           label="Select Printer"
           placeholder="empty"

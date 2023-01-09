@@ -24,7 +24,7 @@ const Handler = async (req, res) => {
                 resolve({ fields, files });
             });
         });
-        // console.log(`data: `, JSON.stringify(data));
+
         await handlePrint(data, req, res);
 
         // Process a POST request
@@ -41,10 +41,11 @@ export default Handler
 const handlePrint = async (data, req, response) => {
 
     const printer = data.fields.printer[0];
+    // const printer_options = data.fields.options[0];
     const file_path = data.files.file[0].path;
 
     const db = await initDB()
-      
+
     if (!file_path) {
         throw 'PDF file name is missing. Please use the following params: <filename> [printername]'
     }
@@ -52,17 +53,22 @@ const handlePrint = async (data, req, response) => {
         response.status(400).json({ message: "printer param not found" });
         throw "printer param not found";
     }
+
+    // console.log(printer_options);
+
     const device = db.data.printers.find(pri => pri.name == printer);
     if (device) {
-        const options = {
+        let options = {
             printer: device.printer,
         };
+        // if (printer_options.length) {
+
+        // }
+
         await print(file_path, options).then((res) => {
-            console.log(res)
             response.status(200).json({ message: "printed" })
         }
         ).catch(err => {
-            console.log(err);
             response.status(500).json({ message: "error for print" })
         });
 

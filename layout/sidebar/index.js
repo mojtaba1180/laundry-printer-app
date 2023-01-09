@@ -17,7 +17,7 @@ const Sidebar = () => {
   ]
   return (
     <div className="flex flex-col w-full h-full gap-10 p-5 ">
-      <h1 className="text-3xl font-semibold" >  Laundry Settings Printer</h1>
+      <h1 className="text-xl font-semibold" >  Laundry Printer</h1>
       <ul className="flex flex-col gap-2 ">
         {
           links.map((item, idx) => {
