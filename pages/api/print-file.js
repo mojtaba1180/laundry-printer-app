@@ -60,6 +60,8 @@ const handlePrint = async (data, req, response) => {
     if (device) {
         let options = {
             printer: device.printer,
+            scale: "fit",
+            paperSize: "letter"
         };
         // if (printer_options.length) {
 
@@ -69,7 +71,7 @@ const handlePrint = async (data, req, response) => {
             response.status(200).json({ message: "printed" })
         }
         ).catch(err => {
-            response.status(500).json({ message: "error for print" })
+            response.status(500).json({ message: err })
         });
 
     } else {

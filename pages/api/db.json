@@ -1,3 +1,16 @@
 {
-  "printers": []
+  "printers": [
+    {
+      "name": "purple",
+      "printer": "priPrinter"
+    },
+    {
+      "name": "blue",
+      "printer": "priPrinter"
+    },
+    {
+      "name": "white",
+      "printer": "priPrinter"
+    }
+  ]
 }
